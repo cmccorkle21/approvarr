@@ -1,9 +1,7 @@
 import datetime
 import json
-import os
 import time
 
-import requests
 from flask import Flask, request
 
 from config import load_config
@@ -78,14 +76,15 @@ def webhook():
     for rule in rules:
         if (
             rule.notify
-            and app in rule.apps
+            and app.lower() in [app.lower() for app in rule.apps]
             and indexer
             in rule.indexer_matches  # TODO: use matcher fn here for either direct match or regex
         ):
             needs_approval = True
         if rule.pause_torrent:  # as soon as one rule wants pause, we do it.
             needs_pause = True
-        tags.append(rule.tags_to_add)
+        for tag in rule.tags_to_add:
+            tags.append(tag)
 
     if not download_id:
         print("No downloadId present; cannot tag by hash")
@@ -142,4 +141,4 @@ def reject(torrent_hash):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
