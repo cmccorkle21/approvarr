@@ -1034,3 +1034,102 @@
   "raw_body": "{\n  \"series\": {\n    \"id\": 12,\n    \"title\": \"Psych\",\n    \"titleSlug\": \"psych\",\n    \"path\": \"/media/library/tv/Psych\",\n    \"tvdbId\": 79335,\n    \"tvMazeId\": 517,\n    \"tmdbId\": 1447,\n    \"imdbId\": \"tt0491738\",\n    \"type\": \"standard\",\n    \"year\": 2006,\n    \"genres\": [\n      \"Comedy\",\n      \"Crime\",\n      \"Drama\",\n      \"Mystery\"\n    ],\n    \"images\": [\n      {\n        \"coverType\": \"banner\",\n        \"url\": \"/MediaCover/12/banner.jpg?lastWrite=639004914863208047\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/graphical/79335-g4.jpg\"\n      },\n      {\n        \"coverType\": \"poster\",\n        \"url\": \"/MediaCover/12/poster.jpg?lastWrite=639004914863308046\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/posters/79335-8.jpg\"\n      },\n      {\n        \"coverType\": \"fanart\",\n        \"url\": \"/MediaCover/12/fanart.jpg?lastWrite=639004914863498043\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/fanart/original/79335-18.jpg\"\n      },\n      {\n        \"coverType\": \"clearlogo\",\n        \"url\": \"/MediaCover/12/clearlogo.png?lastWrite=639004914863048050\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/v4/series/79335/clearlogo/611b5f273fd84.png\"\n      }\n    ],\n    \"tags\": [],\n    \"originalLanguage\": {\n      \"id\": 1,\n      \"name\": \"English\"\n    }\n  },\n  \"episodes\": [\n    {\n      \"id\": 804,\n      \"episodeNumber\": 5,\n      \"seasonNumber\": 0,\n      \"title\": \"Psych: The Movie\",\n      \"overview\": \"The old gang comes together during the holidays after a mystery assailant targets one of their own.\",\n      \"airDate\": \"2017-12-07\",\n      \"airDateUtc\": \"2017-12-08T01:00:00Z\",\n      \"seriesId\": 12,\n      \"tvdbId\": 6186418\n    }\n  ],\n  \"release\": {\n    \"quality\": \"WEBRip-1080p\",\n    \"qualityVersion\": 1,\n    \"releaseTitle\": \"Psych The Movie (2017) WEBRip 1080p MP4\",\n    \"indexer\": \"Knaben (Prowlarr)\",\n    \"size\": 1632087572,\n    \"customFormatScore\": 0,\n    \"customFormats\": [],\n    \"languages\": [\n      {\n        \"id\": 1,\n        \"name\": \"English\"\n      }\n    ]\n  },\n  \"downloadClient\": \"qbittorrent\",\n  \"downloadClientType\": \"qBittorrent\",\n  \"downloadId\": \"50899263557875403B16A42B791C2D3BC2586423\",\n  \"customFormatInfo\": {\n    \"customFormats\": [],\n    \"customFormatScore\": 0\n  },\n  \"eventType\": \"Grab\",\n  \"instanceName\": \"Sonarr\",\n  \"applicationUrl\": \"\"\n}"
 }
 
+{
+  "timestamp": "2025-12-06T19:51:17.974456",
+  "headers": {
+    "Host": "192.168.50.54:5001",
+    "User-Agent": "Sonarr/4.0.16.2944 (alpine 3.22.2)",
+    "Connection": "close",
+    "Accept": "application/json",
+    "Accept-Encoding": "gzip, br",
+    "Content-Type": "application/json",
+    "Content-Length": "2297"
+  },
+  "payload": {
+    "series": {
+      "id": 12,
+      "title": "Psych",
+      "titleSlug": "psych",
+      "path": "/media/library/tv/Psych",
+      "tvdbId": 79335,
+      "tvMazeId": 517,
+      "tmdbId": 1447,
+      "imdbId": "tt0491738",
+      "type": "standard",
+      "year": 2006,
+      "genres": [
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Mystery"
+      ],
+      "images": [
+        {
+          "coverType": "banner",
+          "url": "/MediaCover/12/banner.jpg?lastWrite=639004914863208047",
+          "remoteUrl": "https://artworks.thetvdb.com/banners/graphical/79335-g4.jpg"
+        },
+        {
+          "coverType": "poster",
+          "url": "/MediaCover/12/poster.jpg?lastWrite=639004914863308046",
+          "remoteUrl": "https://artworks.thetvdb.com/banners/posters/79335-8.jpg"
+        },
+        {
+          "coverType": "fanart",
+          "url": "/MediaCover/12/fanart.jpg?lastWrite=639004914863498043",
+          "remoteUrl": "https://artworks.thetvdb.com/banners/fanart/original/79335-18.jpg"
+        },
+        {
+          "coverType": "clearlogo",
+          "url": "/MediaCover/12/clearlogo.png?lastWrite=639004914863048050",
+          "remoteUrl": "https://artworks.thetvdb.com/banners/v4/series/79335/clearlogo/611b5f273fd84.png"
+        }
+      ],
+      "tags": [],
+      "originalLanguage": {
+        "id": 1,
+        "name": "English"
+      }
+    },
+    "episodes": [
+      {
+        "id": 804,
+        "episodeNumber": 5,
+        "seasonNumber": 0,
+        "title": "Psych: The Movie",
+        "overview": "The old gang comes together during the holidays after a mystery assailant targets one of their own.",
+        "airDate": "2017-12-07",
+        "airDateUtc": "2017-12-08T01:00:00Z",
+        "seriesId": 12,
+        "tvdbId": 6186418
+      }
+    ],
+    "release": {
+      "quality": "WEBRip-1080p",
+      "qualityVersion": 1,
+      "releaseTitle": "Psych The Movie (2017) WEBRip 1080p MP4",
+      "indexer": "Knaben (Prowlarr)",
+      "size": 1632087572,
+      "customFormatScore": 0,
+      "customFormats": [],
+      "languages": [
+        {
+          "id": 1,
+          "name": "English"
+        }
+      ]
+    },
+    "downloadClient": "qbittorrent",
+    "downloadClientType": "qBittorrent",
+    "downloadId": "50899263557875403B16A42B791C2D3BC2586423",
+    "customFormatInfo": {
+      "customFormats": [],
+      "customFormatScore": 0
+    },
+    "eventType": "Grab",
+    "instanceName": "Sonarr",
+    "applicationUrl": ""
+  },
+  "raw_body": "{\n  \"series\": {\n    \"id\": 12,\n    \"title\": \"Psych\",\n    \"titleSlug\": \"psych\",\n    \"path\": \"/media/library/tv/Psych\",\n    \"tvdbId\": 79335,\n    \"tvMazeId\": 517,\n    \"tmdbId\": 1447,\n    \"imdbId\": \"tt0491738\",\n    \"type\": \"standard\",\n    \"year\": 2006,\n    \"genres\": [\n      \"Comedy\",\n      \"Crime\",\n      \"Drama\",\n      \"Mystery\"\n    ],\n    \"images\": [\n      {\n        \"coverType\": \"banner\",\n        \"url\": \"/MediaCover/12/banner.jpg?lastWrite=639004914863208047\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/graphical/79335-g4.jpg\"\n      },\n      {\n        \"coverType\": \"poster\",\n        \"url\": \"/MediaCover/12/poster.jpg?lastWrite=639004914863308046\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/posters/79335-8.jpg\"\n      },\n      {\n        \"coverType\": \"fanart\",\n        \"url\": \"/MediaCover/12/fanart.jpg?lastWrite=639004914863498043\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/fanart/original/79335-18.jpg\"\n      },\n      {\n        \"coverType\": \"clearlogo\",\n        \"url\": \"/MediaCover/12/clearlogo.png?lastWrite=639004914863048050\",\n        \"remoteUrl\": \"https://artworks.thetvdb.com/banners/v4/series/79335/clearlogo/611b5f273fd84.png\"\n      }\n    ],\n    \"tags\": [],\n    \"originalLanguage\": {\n      \"id\": 1,\n      \"name\": \"English\"\n    }\n  },\n  \"episodes\": [\n    {\n      \"id\": 804,\n      \"episodeNumber\": 5,\n      \"seasonNumber\": 0,\n      \"title\": \"Psych: The Movie\",\n      \"overview\": \"The old gang comes together during the holidays after a mystery assailant targets one of their own.\",\n      \"airDate\": \"2017-12-07\",\n      \"airDateUtc\": \"2017-12-08T01:00:00Z\",\n      \"seriesId\": 12,\n      \"tvdbId\": 6186418\n    }\n  ],\n  \"release\": {\n    \"quality\": \"WEBRip-1080p\",\n    \"qualityVersion\": 1,\n    \"releaseTitle\": \"Psych The Movie (2017) WEBRip 1080p MP4\",\n    \"indexer\": \"Knaben (Prowlarr)\",\n    \"size\": 1632087572,\n    \"customFormatScore\": 0,\n    \"customFormats\": [],\n    \"languages\": [\n      {\n        \"id\": 1,\n        \"name\": \"English\"\n      }\n    ]\n  },\n  \"downloadClient\": \"qbittorrent\",\n  \"downloadClientType\": \"qBittorrent\",\n  \"downloadId\": \"50899263557875403B16A42B791C2D3BC2586423\",\n  \"customFormatInfo\": {\n    \"customFormats\": [],\n    \"customFormatScore\": 0\n  },\n  \"eventType\": \"Grab\",\n  \"instanceName\": \"Sonarr\",\n  \"applicationUrl\": \"\"\n}"
+}
+
