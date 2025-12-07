@@ -5,7 +5,10 @@ import time
 
 import requests
 from flask import Flask, request
+
 from config import load_config
+from notifications import build_notifier
+from download_clients import qbittorrent as qbt
 
 CFG = load_config("./config.yml")
 
@@ -19,13 +22,8 @@ QBT_URL = CFG.qbit.url
 QBT_USER = CFG.qbit.username
 QBT_PASS = CFG.qbit.password
 
-notifier = #magic load config into notifier class
 
-PUSHOVER_TOKEN =
-PUSHOVER_USER = 
-BASE_PUBLIC_URL = os.getenv(
-    "BASE_PUBLIC_URL", "http://192.168.50.54:5001"
-)  # change to your real public URL later
+NOTIFIER = build_notifier(CFG)
 
 # Indexers that should trigger approval flow
 NEEDS_APPROVAL_INDEXERS = {
@@ -35,80 +33,6 @@ NEEDS_APPROVAL_INDEXERS = {
 }
 
 session = requests.Session()
-
-
-# ---------- qBittorrent helpers ----------
-
-
-def qbt_post(path, data=None):
-    url = f"{QBT_URL}{path}"
-    resp = session.post(url, data=data or {}, timeout=5)
-    print(f"[QBT] POST {url} -> {resp.status_code} {resp.text[:200]!r}")
-    resp.raise_for_status()
-    return resp
-
-
-def qbt_login():
-    qbt_post("/api/v2/auth/login", {"username": QBT_USER, "password": QBT_PASS})
-
-
-def qbt_pause(torrent_hash: str):
-    qbt_post("/api/v2/torrents/stop", {"hashes": torrent_hash})
-    print(f"pausing hash: {torrent_hash}")
-
-
-def qbt_add_tags(torrent_hash: str, tags):
-    qbt_post(
-        "/api/v2/torrents/addTags", {"hashes": torrent_hash, "tags": ",".join(tags)}
-    )
-
-
-def qbt_resume(torrent_hash: str):
-    qbt_post("/api/v2/torrents/start", {"hashes": torrent_hash})
-
-
-def qbt_remove_tag(torrent_hash: str, tag: str):
-    qbt_post("/api/v2/torrents/removeTags", {"hashes": torrent_hash, "tags": tag})
-
-
-def qbt_delete(torrent_hash: str, delete_files: bool = True):
-    qbt_post(
-        "/api/v2/torrents/delete",
-        {"hashes": torrent_hash, "deleteFiles": "true" if delete_files else "false"},
-    )
-
-
-# ---------- Pushover helper ----------
-
-
-def send_pushover_approval(name: str, torrent_hash: str, indexer: str):
-    if not (PUSHOVER_TOKEN and PUSHOVER_USER):
-        print("Pushover not configured, skipping notification")
-        return
-
-    approve_url = f"{BASE_PUBLIC_URL}/approve/{torrent_hash}"
-    reject_url = f"{BASE_PUBLIC_URL}/reject/{torrent_hash}"
-
-    msg = (
-        f"Indexer: {indexer}\n"
-        f"Release: {name}\n\n"
-        f"Approve: {approve_url}\n"
-        f"Reject:  {reject_url}"
-    )
-
-    resp = session.post(
-        "https://api.pushover.net/1/messages.json",
-        data={
-            "token": PUSHOVER_TOKEN,
-            "user": PUSHOVER_USER,
-            "title": "Torrent needs approval",
-            "message": msg,
-            "priority": 0,
-        },
-        timeout=5,
-    )
-    resp.raise_for_status()
-
 
 # ---------- Webhook + approval endpoints ----------
 
@@ -162,6 +86,7 @@ def webhook():
         f"eventType={event_type}, indexer={indexer}, title={release_title}, downloadId={download_id}"
     )
 
+    # TODO: use rules from CFG here
     # Only trigger approval for certain indexers
     if indexer not in NEEDS_APPROVAL_INDEXERS:
         print("Indexer not in NEEDS_APPROVAL_INDEXERS, letting it go through normally")
@@ -174,14 +99,14 @@ def webhook():
     torrent_hash = download_id
 
     try:
-        qbt_login()
+        qbt.login()
 
         # Small delay in case Sonarr sent torrent and webhook in parallel
         time.sleep(1)
 
         # Tag & pause
-        qbt_add_tags(torrent_hash, ["needs-approval"])
-        qbt_pause(torrent_hash)
+        qbt.add_tags(torrent_hash, ["needs-approval"])
+        qbt.pause(torrent_hash)
 
         send_pushover_approval(release_title or torrent_hash, torrent_hash, indexer)
 
@@ -196,10 +121,10 @@ def webhook():
 @app.route("/approve/<torrent_hash>", methods=["GET"])
 def approve(torrent_hash):
     try:
-        qbt_login()
-        qbt_remove_tag(torrent_hash, "needs-approval")
+        qbt.login()
+        qbt.remove_tag(torrent_hash, "needs-approval")
         # optionally you can call setCategory here if you want
-        qbt_resume(torrent_hash)
+        qbt.resume(torrent_hash)
         return f"Approved {torrent_hash}\n", 200
     except Exception as e:
         return f"Error approving: {e}\n", 500
@@ -208,8 +133,8 @@ def approve(torrent_hash):
 @app.route("/reject/<torrent_hash>", methods=["GET"])
 def reject(torrent_hash):
     try:
-        qbt_login()
-        qbt_delete(torrent_hash, delete_files=True)
+        qbt.login()
+        qbt.delete(torrent_hash, delete_files=True)
         return f"Rejected {torrent_hash}\n", 200
     except Exception as e:
         return f"Error rejecting: {e}\n", 500
