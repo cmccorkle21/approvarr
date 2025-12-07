@@ -8,31 +8,15 @@ from flask import Flask, request
 
 from config import load_config
 from notifications import build_notifier
-from download_clients import qbittorrent as qbt
-
-CFG = load_config("./config.yml")
+from qbittorrent_client import build_qbit_client
 
 app = Flask(__name__)
 
-
 LOGFILE = "received_webhooks.log"
-
-# --- Config via env vars ---
-QBT_URL = CFG.qbit.url
-QBT_USER = CFG.qbit.username
-QBT_PASS = CFG.qbit.password
-
-
-NOTIFIER = build_notifier(CFG)
-
-# Indexers that should trigger approval flow
-NEEDS_APPROVAL_INDEXERS = {
-    # swap this for your TL non-freeleech indexer name
-    "BitSearch (Prowlarr)",
-    # "TL_full (Prowlarr)",
-}
-
-session = requests.Session()
+CFG = load_config("./config.yml")
+notifier = build_notifier(CFG)
+qbt = build_qbit_client(CFG)
+rules = CFG.rules
 
 # ---------- Webhook + approval endpoints ----------
 
@@ -75,22 +59,33 @@ def webhook():
         return "Ignored (not Grab)", 200
 
     release = payload.get("release") or {}
+    app = payload.get("instanceName")
     indexer = release.get("indexer")
     release_title = release.get("releaseTitle") or release.get("title")
-
-    download_id = payload.get(
-        "downloadId"
-    )  # this should be the torrent hash for qBittorrent
+    download_id = payload.get("downloadId")
 
     print(
         f"eventType={event_type}, indexer={indexer}, title={release_title}, downloadId={download_id}"
     )
 
-    # TODO: use rules from CFG here
-    # Only trigger approval for certain indexers
-    if indexer not in NEEDS_APPROVAL_INDEXERS:
-        print("Indexer not in NEEDS_APPROVAL_INDEXERS, letting it go through normally")
-        # return "OK (no approval required)", 200
+    if not indexer:
+        return "no indexer", 400
+
+    # decide if needs approval or not
+    needs_approval = False
+    needs_pause = False
+    tags = []  # could be from multiple rules, though that would be weird
+    for rule in rules:
+        if (
+            rule.notify
+            and app in rule.apps
+            and indexer
+            in rule.indexer_matches  # TODO: use matcher fn here for either direct match or regex
+        ):
+            needs_approval = True
+        if rule.pause_torrent:  # as soon as one rule wants pause, we do it.
+            needs_pause = True
+        tags.append(rule.tags_to_add)
 
     if not download_id:
         print("No downloadId present; cannot tag by hash")
@@ -105,10 +100,15 @@ def webhook():
         time.sleep(1)
 
         # Tag & pause
-        qbt.add_tags(torrent_hash, ["needs-approval"])
-        qbt.pause(torrent_hash)
+        if tags:
+            qbt.add_tags(torrent_hash, tags)
+        if needs_pause:
+            qbt.pause(torrent_hash)
 
-        send_pushover_approval(release_title or torrent_hash, torrent_hash, indexer)
+        if notifier and needs_approval:
+            notifier.send_approval(
+                name="test", torrent_hash=torrent_hash, indexer=indexer
+            )
 
         print(f"Tagged & paused torrent {torrent_hash} for approval")
 
@@ -124,6 +124,7 @@ def approve(torrent_hash):
         qbt.login()
         qbt.remove_tag(torrent_hash, "needs-approval")
         # optionally you can call setCategory here if you want
+        qbt.add_tags(torrent_hash, ["approved"])
         qbt.resume(torrent_hash)
         return f"Approved {torrent_hash}\n", 200
     except Exception as e:
