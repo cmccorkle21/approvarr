@@ -9,6 +9,7 @@ class Notifier(Protocol):
         self,
         *,
         name: str,
+        size: str,
         torrent_hash: str,
         indexer: str,
         extra: Optional[dict] = None,

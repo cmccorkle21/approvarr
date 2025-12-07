@@ -60,6 +60,9 @@ def webhook():
     app = payload.get("instanceName")
     indexer = release.get("indexer")
     release_title = release.get("releaseTitle") or release.get("title")
+    gib_size = int(release.get("size")) / (1024 ** 3)
+    release_size = f"{gib_size:.2f} GiB"
+
     download_id = payload.get("downloadId")
 
     print(
@@ -80,11 +83,12 @@ def webhook():
             and indexer
             in rule.indexer_matches  # TODO: use matcher fn here for either direct match or regex
         ):
+            # these only apply if the rules matches!
             needs_approval = True
-        if rule.pause_torrent:  # as soon as one rule wants pause, we do it.
-            needs_pause = True
-        for tag in rule.tags_to_add:
-            tags.append(tag)
+            if rule.pause_torrent:  # as soon as one rule wants pause, we do it.
+                needs_pause = True
+            for tag in rule.tags_to_add:
+                tags.append(tag)
 
     if not download_id:
         print("No downloadId present; cannot tag by hash")
@@ -101,15 +105,15 @@ def webhook():
         # Tag & pause
         if tags:
             qbt.add_tags(torrent_hash, tags)
+            print("tags added")
         if needs_pause:
             qbt.pause(torrent_hash)
+            print("torrent paused")
 
-        if notifier and needs_approval:
+        if notifier and needs_approval and release_title:
             notifier.send_approval(
-                name="test", torrent_hash=torrent_hash, indexer=indexer
+                name=release_title, size=release_size, torrent_hash=torrent_hash, indexer=indexer
             )
-
-        print(f"Tagged & paused torrent {torrent_hash} for approval")
 
     except Exception as e:
         print(f"Error handling approval flow: {e}")

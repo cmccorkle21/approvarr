@@ -18,6 +18,7 @@ class PushoverNotifier(Notifier):
         self,
         *,
         name: str,
+        size: str,
         torrent_hash: str,
         indexer: str,
         extra: Optional[dict] = None,
@@ -27,7 +28,8 @@ class PushoverNotifier(Notifier):
 
         msg = (
             f"Indexer: {indexer}\n"
-            f"Release: {name}\n\n"
+            f"Release: {name}\n"
+            f"Size: {size}\n\n"
             f"Approve: {approve_url}\n"
             f"Reject:  {reject_url}"
         )
