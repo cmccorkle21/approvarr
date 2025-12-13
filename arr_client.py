@@ -2,22 +2,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Literal, List, Any, Dict
+from typing import Any, Dict, List
 
 import requests
 
-from config import ApprovarrConfig
-
-
-ArrType = Literal["sonarr", "radarr"]
-
-
-@dataclass
-class ArrInstance:
-    name: str
-    type: ArrType
-    url: str
-    api_key: str
+from config import ApprovarrConfig, ArrInstance
 
 
 @dataclass
@@ -84,21 +73,12 @@ class ArrClient:
                     )
                     resp.raise_for_status()
                 except Exception as e:
-                    print(f"[ARR] Failed to delete queue item {qid} from {inst.name}: {e}")
+                    print(
+                        f"[ARR] Failed to delete queue item {qid} from {inst.name}: {e}"
+                    )
 
 
 def build_arr_client(cfg: ApprovarrConfig) -> ArrClient:
-    instances: list[ArrInstance] = []
-
-    for raw in cfg.__dict__.get("arr", []) if hasattr(cfg, "arr") else []:
-        # if you wire 'arr' into ApprovarrConfig properly, this becomes just cfg.arr
-        instances.append(
-            ArrInstance(
-                name=raw["name"],
-                type=raw.get("type", "sonarr"),
-                url=raw["url"],
-                api_key=raw["api_key"],
-            )
-        )
+    instances = cfg.arr
 
     return ArrClient(instances)

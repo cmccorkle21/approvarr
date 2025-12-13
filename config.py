@@ -1,12 +1,22 @@
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Literal
 
 import yaml
 
 # -------------------------
 # Dataclass Models
 # -------------------------
+
+ArrType = Literal["sonarr", "radarr"]
+
+
+@dataclass
+class ArrInstance:
+    name: str
+    type: ArrType
+    url: str
+    api_key: str
 
 
 @dataclass
@@ -48,6 +58,7 @@ class ApprovarrConfig:
     notifications: NotificationConfig
     behavior: BehaviorConfig
     rules: List[RuleConfig]
+    arr: List[ArrInstance]
 
 
 # -------------------------
@@ -109,6 +120,19 @@ def load_config(path: Optional[str] = None) -> ApprovarrConfig:
     # ---- server ----
     server_cfg = raw.get("server", {})
 
+    # ---- arr client ----
+    arr_raw = raw.get("arr", [])
+    arr: List[ArrInstance] = []
+    for client in arr_raw:
+        arr.append(
+            ArrInstance(
+                name=client["name"],
+                type=client["type"],
+                url=client["url"],
+                api_key=client["api_key"],
+            )
+        )
+
     # ---- final object ----
     config = ApprovarrConfig(
         qbit=qbit_cfg,
@@ -116,6 +140,7 @@ def load_config(path: Optional[str] = None) -> ApprovarrConfig:
         notifications=notif_cfg,
         behavior=behavior_cfg,
         rules=rules,
+        arr=arr,
     )
 
     validate_config(config)
@@ -150,5 +175,6 @@ def validate_config(cfg: ApprovarrConfig):
             )
 
     # You can add much more depending on how strict you want v1 to be.
+    # TODO: warn on no provided arr clients
 
     return True

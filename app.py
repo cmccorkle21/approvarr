@@ -2,6 +2,7 @@ import datetime
 import json
 import time
 
+from arr_client import build_arr_client
 from flask import Flask, request
 
 from config import load_config
@@ -14,6 +15,7 @@ LOGFILE = "received_webhooks.log"
 CFG = load_config("./config.yml")
 notifier = build_notifier(CFG)
 qbt = build_qbit_client(CFG)
+arr = build_arr_client(CFG)
 rules = CFG.rules
 
 # ---------- Webhook + approval endpoints ----------
@@ -139,6 +141,14 @@ def reject(torrent_hash):
     try:
         qbt.login()
         qbt.delete(torrent_hash, delete_files=True)
+        print("torrent deleted")
+        # if arr:
+        #     arr.remove_by_download_id(
+        #         download_id=torrent_hash,
+        #         blocklist=True,               # INFO: there doesn't seem to be a reason for this, radar/sonarr figures it out pretty well
+        #         remove_from_client=False,     #       when you delete a torrent from qbt
+        #     )
+        #     print("download removed from arr app")
         return f"Rejected {torrent_hash}\n", 200
     except Exception as e:
         return f"Error rejecting: {e}\n", 500
